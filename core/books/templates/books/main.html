@@ -1,0 +1,14 @@
+{% extends 'base.html' %} 
+{% block title %}home{% endblock title %} 
+{% block content %}
+{%if qs %}
+    <ul>
+    {%for i in qs%}
+    <li>{{i.titke}}</li>
+    <li>{{i.slug}}</li>
+    <li>{{i.author}}</li>
+    </ul>
+    {%endfor%}
+{%endif%}
+
+{% endblock content %}
