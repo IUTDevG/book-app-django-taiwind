@@ -1,7 +1,9 @@
 from django.db import models
+from django.urls import reverse
 from publisher.models import Publisher
 from authors.models import Author
 from django.utils.text import slugify
+# from django.shortcuts import reverse
 #qr
 import qrcode
 from io import BytesIO
@@ -26,6 +28,10 @@ class BookTitle(models.Model):
     @property
     def books(self):
         return self.books.all()
+    
+    def get_absolute_url(self):
+        return reverse("books:detail-book", kwargs={"pk": self.pk})
+    
 
     
     def save(self, *args,**kwargs):

@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'django_countries',
     'import_export',
     'tailwind',
-       'theme',
-         'django_browser_reload',
+    'theme',
+    'django_browser_reload',
+    'widget_tweaks',
 
     # apps
     'authors',
