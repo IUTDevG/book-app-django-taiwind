@@ -16,7 +16,7 @@ class BookTitleForm(forms.ModelForm):
         title = self.cleaned_data.get('title')
 
         if len(title) < 5:
-            # error_msg = 'the title is too short'
+            error_msg = 'the title is too short'
             # raise ValidationError(error_msg)
             self.add_error('title','the title is too short')
         

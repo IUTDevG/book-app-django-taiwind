@@ -1,41 +1,82 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
+{% load static %}
 {% load widget_tweaks %}
-{% block title %}Livres{% endblock title %} 
+
+{% block scripts %}
+<script src="{% static 'books/main.js' %}" defer></script>
+<script src="{% static 'js/form_modal.js' %}" defer></script>
+
+{% endblock scripts %}
+
+{% block title %}Livres{% endblock title %}
+
 {% block content %}
 
-    <h1>Liste des Titres de Livres</h1>
-    <!-- <div class="border bg-purple-200 p-3 h-10 w-10 rounded-xl"></div> -->
-    <form action="" method="POST">
-        {%csrf_token%}
-       <div class="mb-2">
-        <label for="{{form.title.id_for_label}}" class="block font-bold text-slate-800 dark:text-slate-300">Titre:
-            {{form.title|add_class:'bg-slate-100 dark:bg-slate-300 text-slate-800 p-2 rounded w-full'}}
-            {%if form.title.errors%}
-                {%for error in form.title.errors%}
-                <div class="my-1 text-red-500 font-bold text-sm">{{error}}</div>
-                {%endfor%}
-            {%endif%}
-        </label>
-       </div>
-       <div class="mb-2">
-        <label for="{{form.author.id_for_label}}" class="block font-bold text-slate-800 dark:text-slate-300">Auteur:
-            {{form.author|add_class:'bg-slate-100 dark:bg-slate-300 text-slate-800 p-2 rounded w-full'}}
-        </label>
-       </div>
-       <div class="mb-2">
-        <label for="{{form.publisher.id_for_label}}" class="block font-bold text-slate-800 dark:text-slate-300">Publie:
-            {{form.publisher|add_class:'bg-slate-100 dark:bg-slate-300 text-slate-800 p-2 rounded w-full'}}
-        </label>
-       </div>
-        <button type="submit" class="p-3 bg-blue-500 text-white">send </button>
-    </form>
-    <ul>
-        {% for book in book_titles %}
-            <li>{{ book.title }}</li>  
-        {% empty %}
-            <li>Aucun livre disponible.</li>
-        {% endfor %}
-    </ul>
+{% if messages %}
+    {% for message in messages %}
+        {% if 'info' in message.tags %}
+            {% include 'components/alert.html' with is_info=True title="Success" body=message %}
+        {% elif 'error' in message.tags %}
+            {% include 'components/alert.html' with is_info=False title="Error" body=message %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
+{% include 'components/header.html' with title="Liste des Titres de Livres" description="List of book titles available" is_form_available=True icon="<i class='fa-solid fa-plus'></i>" %}
+
+<!-- Liste des lettres -->
+<div class="flex space-x-2 my-4">
+    {% for letter in letters %}
+        <a href="{% url 'books:main' letter|lower %}" class="px-2 py-1 border rounded {% if letter == selected_letter|upper %}bg-blue-500 text-white{% endif %}">{{ letter }}</a>
+    {% endfor %}
+</div>
+
+<!-- Formulaire en Modal -->
+<div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+<div id="modal-form" class="fixed inset-0 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <div class="flex justify-between items-center border-b pb-2 mb-4">
+            <h2 class="text-xl font-bold">Ajouter un Livre</h2>
+            <button id="close-modal-btn" class="text-gray-600 hover:text-gray-900">&times;</button>
+        </div>
+        
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="mb-2">
+                <label for="{{ form.title.id_for_label }}" class="block font-bold text-slate-800">Titre:</label>
+                {{ form.title|add_class:'bg-slate-100 text-slate-800 p-2 rounded w-full' }}
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <div class="my-1 text-red-500 font-bold text-sm">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-2">
+                <label for="{{ form.author.id_for_label }}" class="block font-bold text-slate-800">Auteur:</label>
+                {{ form.author|add_class:'bg-slate-100 text-slate-800 p-2 rounded w-full' }}
+            </div>
+
+            <div class="mb-2">
+                <label for="{{ form.publisher.id_for_label }}" class="block font-bold text-slate-800">Éditeur:</label>
+                {{ form.publisher|add_class:'bg-slate-100 text-slate-800 p-2 rounded w-full' }}
+            </div>
+
+            <div class="flex justify-end space-x-2 mt-4">
+                <button type="button" id="close-modal-btn" class="px-4 py-2 bg-gray-400 text-white rounded-lg">Annuler</button>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des livres -->
+<ul class="mt-4">
+    {% for book in book_titles %}
+        <li class="border-b py-2"><a href="{{book.get_absolute_url}}">{{ book.title }}</a></li>  
+    {% empty %}
+        <li class="text-gray-500">Aucun livre disponible commençant avec <b>{{ selected_letter }}</b>.</li>
+    {% endfor %}
+</ul>
 
 {% endblock content %}

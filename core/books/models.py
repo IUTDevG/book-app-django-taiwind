@@ -11,6 +11,7 @@ from django.core.files import File
 from PIL import Image
 import uuid
 from rentals.choices import STATUS_CHOICES
+# from django.contrib import messages
 
 
 # Create your models here.
@@ -27,10 +28,11 @@ class BookTitle(models.Model):
     
     @property
     def books(self):
-        return self.books.all()
+        return self.book_set.all()
     
     def get_absolute_url(self):
-        return reverse("books:detail-book", kwargs={"pk": self.pk})
+        letter = self.title[:1].lower()
+        return reverse("books:detail", kwargs={"letter":letter,"slug": self.slug})
     
 
     
@@ -46,6 +48,17 @@ class Book(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes',null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        letter = self.title.title[:1].lower()
+        return reverse("books:detail-book", kwargs={"letter":letter,"slug": self.title.slug,"book_id":self.isbn})
+    
+    def delele_object(self):
+        letter = self.title.title[:1].lower()
+        return reverse('books:delete-book',kwargs={'letter':letter,"slug": self.title.slug,"book_id":self.isbn})
+
+    
+
 
     def __str__(self):
         return str(self.title)
