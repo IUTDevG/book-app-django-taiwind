@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load widget_tweaks%}
+{% block title %}
+  new rental
+{% endblock title %}
+
+{% block content %}
+<form method="POST" class="w-1/2">
+  {%csrf_token%}
+<div class="mb-2 ">
+  <label for="{{ form.customer.id_for_label }}" class="block font-bold text-slate-800">Customer:</label>
+  {{ form.customer|add_class:'bg-slate-100 text-slate-800 p-2 rounded w-full' }}
+</div>
+<button type="submit" class="p-3 bg-sky-500 hover:bg-sky-600 rounded-lg text-white">add</button>
+</form>
+{% endblock content %}

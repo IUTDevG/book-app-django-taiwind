@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detail Livres{% endblock title %}
+{% block scripts %}
+<script src="{% static 'books/main.js' %}" defer></script>
+<script src="{% static 'books/js/form_modal.js' %}" defer></script>
+{% endblock scripts %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if 'info' in message.tags %}
+            {% include 'components/alert.html' with is_info=True title="Success" body=message %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% include "components/header.html" with title=object.title description='Detail booktitle' is_go_back=True %}
+<div class="overflow-x-auto">
+  
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border px-4 py-2 text-left">#</th>
+                    <th class="px-4 py-2">BOOK TITLE</th>
+                    <th class=" px-4 py-2">BOOK ID</th>
+                    <th class=" px-4 py-2">ISBN</th>
+                    <th class=" px-4 py-2">QR CODE</th>
+                    <th class=" px-4 py-2">STATUS</th>
+                    <th class=" px-4 py-2">AVAILABLE</th>
+                    <th class=" px-4 py-2 text-center">SELECT</th>
+                    <th class=" px-4 py-2 text-center">DELETE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in object.books %}
+                <tr class="border-t hover:bg-gray-100">
+                    <td class="px-4 py-2">{{ forloop.counter }}</td>
+                    <td class="px-4 py-2">{{ obj.title.title }}</td>
+                    <td class=" px-4 py-2">{{ obj.id }}</td>
+                    <td class=" px-4 py-2">{{ obj.isbn }}</td>
+                    <td class=" px-4 py-2">
+                        {% if obj.qr_code %}
+                            <img src="{{ obj.qr_code.url }}" alt="QR Code" class="w-10 h-10">
+                        {% else %}
+                            <span class="text-gray-400">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td class=" px-4 py-2">
+                        {% if obj.status %}
+                            <span class="text-green-600 font-bold">{{obj.status}}</span>
+                        {% else %}
+                            <span class="text-red-600">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class=" px-4 py-2">
+                        {% if obj.is_available %}
+                            <i class="fa-solid fa-check text-green-500 ml-10"></i>
+                        {% else %}
+                        <i class="fa-solid fa-xmark text-red-500 ml-10"></i>
+                        {% endif %}
+                    </td>
+                    <td class=" px-4 py-2">
+                     
+                        {% include "components/buttons/select_button.html" with href=obj.get_absolute_url%}
+                    
+                                           </td>
+                    <td class="px-4 py-2 ">
+                    
+                        {% include "components/buttons/delete_button.html" with href=obj.delete_object %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-4">Aucun livre trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div>
+
+{% endblock content %}

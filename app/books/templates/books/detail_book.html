@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{%load static %}
+
+{% block scripts %}
+
+    <script src="{% static 'books/detail_book.js' %}" defer></script>
+    <script src="{% static 'books/main.js' %}" defer></script>
+{% endblock scripts %}
+
+{% block content %}
+
+
+{% include "components/header.html" with title=object.title.title description=object.title.publisher.name is_go_back=True %}
+  <div class="flex justify-center">
+    <div>
+        <div class="text-center mb-3">
+           
+            {% if object.is_available %}
+            <a href="{% url 'rentals:new' object.pk %}" class="p-3 bg-sky-500 hover:bg-sky-600 rounded-lg">rent</a>
+                <p>Disponible: 
+                {% if object.status %}
+                    {{ object.status }}
+                {%else%}    
+                    never rented                  
+                {% endif %}
+            </p>
+            {% else %}
+                <p>Non disponible</p>
+            {% endif %}
+
+        </div>
+       
+        <img src="{{ object.qr_code.url }}" alt="{{ object.isbn }}" class="w-52 h-52 rounded">
+        <div class="mt-5 text-center">
+            <!-- ```html -->
+            {% if not object.is_available %}
+                <a href="{% url 'rentals:update' object.id object.rentel_id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white dark:text-slate-900 rounded p-3">Changer le statut</a>
+            {% endif %}
+            <a href="{% url 'rentals:detail' object.id %}" class="bg-rose-500 hover:bg-rose-600 text-white dark:text-slate-900  rounded p-3">Historique</a>
+            <!-- ``` -->
+        </div>
+              
+    </div>
+  </div>
+  <div class="flex justify-center">
+        <div class="mt-5 p-3 rounded-lg relative bg-slate-200 dark:text-slate-700 w-[600px]">
+            <div id="book-id-box">{{ object.id }}</div>
+            <div class="absolute dark:text-white right-3 top-3 " id="copy-btn-box">
+                <i class="fa-regular fa-copy fa-xl cursor-pointer"></i>
+            </div>
+        </div>
+  </div>
+ 
+ 
+
+{% endblock content %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{%load static%}
+{%load widget_tweaks%}
+{% block title %}search rental{% endblock title %} 
+{% block scripts %}
+<script src="{% static 'rentals/main.js' %}" defer></script>
+{% endblock scripts %}
+{% block content %}
+
+
+<div class=" flex justify-center items-center h-[500px] ">
+    <form class="w-[400px] " method="POST" id="search-form" autocomplete="off">
+        {%csrf_token%}
+        <label for="{{form.search.id_for_label}}" class="block text-3xl text-center text-gray-700 dark:text-white font-bold mb-5">search for books
+            {{form.search|add_class:'bg-slate-100 dark:bg-slate-300 text-slate-800 rounded-lg p-3 drop-shadow-xl w-full'}}
+        </label>
+    </form>
+</div>
+
+{% endblock content %}
+

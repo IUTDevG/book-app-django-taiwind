@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{%load static%}
+{%load widget_tweaks%}
+{%load get_status_text%}
+{% block scripts %}
+<script src="{% static 'rentals/main.js' %}" defer></script>
+{% endblock scripts %}
+{% block title %}rental history{% endblock title %} 
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        {% if 'info' in message.tags %}
+            {% include 'components/alert.html' with is_info=True title="Success" body=message %}
+        {% elif 'error' in message.tags %}
+            {% include 'components/alert.html' with is_info=False title="Error" body=message %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% include "components/header.html" with title=object.title.title description=object.title.publisher.name is_go_back=True %}
+
+
+
+{% if object %}
+    {% if object_list %}
+    <div class="overflow-x-auto mt-2">
+        <table class="min-w-full border-collapse  dark:bg-gray-800 dark:border-gray-700  dark:text-slate-200" >
+            <thead>
+                <tr class="bg-gray-200  dark:bg-gray-800 dark:border-gray-700">
+                    <th class="border px-4 py-2 text-left">#</th>
+                    <th class="px-4 py-2">CUSTOMER</th>
+                    <th class=" px-4 py-2">ID</th>
+                    <th class=" px-4 py-2">ISBN</th>
+                    <th class=" px-4 py-2 text-center">STATUS</th>
+                    <th class=" px-4 py-2">START</th>
+                    <th class=" px-4 py-2">END</th>
+                    <th class=" px-4 py-2">RETURN</th>
+                    <th class=" px-4 py-2 text-center">IS CLOSED</th>
+                    <!-- <th class=" px-4 py-2 text-center">Delete</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in object_list %}
+                <tr class="border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-900 dark:text-neutral-200 hover:bg-gray-100 ">
+                    <td class="px-4 py-2">{{ forloop.counter }}</td>
+                    <td class="px-4 py-2 text-center">{{ obj.customer.username }}</td>
+                    <td class=" px-4 py-2 text-center">{{ obj.book.id }}</td>
+                    <td class=" px-4 py-2 text-center">{{ obj.book.isbn }}</td>
+                    <td class=" px-4 py-2 text-center">
+                       <!--  -->
+                        {{obj.status|get_status_text}}
+                    </td>
+                    <td class=" px-4 py-2 text-center">
+                       <!--  -->
+                        {{obj.rent_start_date}}
+                    </td>
+                    <td class=" px-4 py-2 text-center">
+                        <!--  -->
+                        {{obj.rent_end_date}}
+                    </td>
+                    <td class=" px-4 py-2 text-center">
+
+                     {% if  obj.rent_date%}
+                        {{obj.rent_date}}
+                     {%else%}
+                       -
+                     {% endif %}
+                     <!--  -->
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <!--  -->
+                        
+                     {% if  obj.is_closed%}
+                   <i class="fa-solid fa-check fa-lg text-teal-300"></i>
+                    
+                    {%else%}
+                    <i class="fa-solid fa-xmark fa-lg text-red-500"></i>
+                    {% endif %}
+                        
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-4">Aucun livre trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {%else%}
+    no rental data
+      
+    {% endif %}
+{%else%}    
+no book found
+  
+{% endif %}
+{% endblock content %}
