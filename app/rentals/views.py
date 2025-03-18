@@ -7,6 +7,9 @@ from django.views.generic import ListView,UpdateView,CreateView,FormView
 from django.db.models import Q
 from datetime import datetime
 from django.contrib import messages
+from .choices import FORMAT_CHOICES
+from .admin import RentalResource
+from django.http import HttpResponse
 
 # Create your views here.
 def search_book_view(request):
@@ -94,5 +97,31 @@ class SelectDownlaoldRentalsView(FormView):
     def get_success_url(self):
         return self.request.path
     
+    
+    def get_context_data(self, **kwargs):
+       
+        context = super().get_context_data(**kwargs)
+        book_id = self.kwargs.get('book_id')
+        context['book_id'] = book_id
+
+        return context
+    
     def post(self, request,**kwargs):
-        return 
+        formats = dict(FORMAT_CHOICES)
+        format = self.request.POST.get("format")
+        format = formats[format]
+        book_id = self.kwargs.get('book_id')
+        qs = Rental.objects.filter(Q(book__id=book_id)|Q(book__isbn=book_id))
+        dataset = RentalResource().export(qs)
+
+        if format == 'csv':
+            ds = dataset.csv
+        elif format == 'xls':
+            ds = dataset.xls
+        else:
+            ds = dataset.json
+
+        reponse = HttpResponse(ds,content_type=format)
+        reponse['Content-Disposition'] = f'attachment; filename=rentals.{format}'
+        
+        return reponse
