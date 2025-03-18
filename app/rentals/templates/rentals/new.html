@@ -5,6 +5,7 @@
 {% endblock title %}
 
 {% block content %}
+{% include "components/header.html" with title='add new rrental' description=book_id is_go_back=True %}
 <form method="POST" class="w-1/2">
   {%csrf_token%}
 <div class="mb-2 ">
