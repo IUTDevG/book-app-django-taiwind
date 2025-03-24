@@ -18,14 +18,15 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home,change_theme,DashboardView,chart_data
+from .views import home,change_theme,DashboardView,chart_data,login_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('home/',home,name='home'),
     
     path('',DashboardView.as_view(),name='home'),
-     path('chart-data/',chart_data,name='data'),
+     path('login/',login_view,name='login'),
+      path('chart-data/',chart_data,name='data'),
     path('switch/',change_theme,name='change'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('books/',include('books.urls',namespace='books')),

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponseRedirect,JsonResponse
 from django.views.generic import TemplateView
 from django.db.models import Count,Sum
@@ -7,6 +7,75 @@ from rentals.models import Rental
 from rentals.choices import STATUS_CHOICES
 from customers.models import Customer
 from publisher.models import Publisher
+from .forms import LoginForm,OTPForm
+from django.contrib.auth import login,authenticate,logout
+from django.contrib import messages
+from datetime import datetime
+import pyotp
+from .utils import send_otp
+from django.contrib.auth.models import User
+
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+def login_view(request):
+    form = LoginForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                send_otp(request)
+                request.session['username'] = username
+                print('ok, sending otp')
+                return redirect('otp')
+            else:
+                messages.add_message(request, messages.ERROR, 'Invalid username or password')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'login.html', context)
+
+
+def otp_view(request):
+    error_message = None
+    form = OTPForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            otp = form.cleaned_data['otp']
+            username = request.session['username']
+            otp_secret_key = request.session['otp_secret_key']
+            otp_valid_until = request.session['otp_valid_date']
+
+            if otp_secret_key and otp_valid_until:
+                valid_until = datetime.fromisoformat(otp_valid_until)
+                if valid_until > datetime.now():
+                    totp = pyotp.TOTP(otp_secret_key, interval=120)
+                    if totp.verify(otp):
+                        user = get_object_or_404(User, username=username)
+                        login(request, user)
+                        del request.session['otp_secret_key']
+                        del request.session['otp_valid_date']
+                        return redirect('home')
+                    else:
+                        error_message = 'Invalid one-time-password'
+                else:
+                    error_message = "One-time-password has expired"
+            else:
+                error_message = "Ups... something went wrong :("
+
+        if error_message: messages.add_message(request, messages.ERROR, error_message)
+    
+    context = {'form': form}
+
+    return render(request, 'otp.html', context)
+
 
 
 class DashboardView(TemplateView):
