@@ -10,8 +10,10 @@ from django.contrib import messages
 from .choices import FORMAT_CHOICES
 from .admin import RentalResource
 from django.http import HttpResponse
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+@login_required
 def search_book_view(request):
     form = SearchBookForm(request.POST or None)
     search_query = request.POST.get('search', None)
@@ -23,7 +25,7 @@ def search_book_view(request):
 
     return render(request,'rentals/main.html',context)
 
-class BookRentalHistoryView(ListView):
+class BookRentalHistoryView(LoginRequiredMixin,ListView):
     model = Rental
     template_name = 'rentals/detail.html'
 
@@ -47,7 +49,7 @@ class BookRentalHistoryView(ListView):
 
         return context
 
-class UpdateRentalStatusView(UpdateView):
+class UpdateRentalStatusView(LoginRequiredMixin,UpdateView):
     model = Rental
     template_name = 'rentals/update.html'
     fields = ('status',)
@@ -59,13 +61,13 @@ class UpdateRentalStatusView(UpdateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         if instance.status == '#1':
-            instance.rent_date = datetime.today().date()
+            instance.return_date = datetime.today().date()
             instance.is_closed = True
         instance.save()
         messages.add_message(self.request,messages.INFO,f"{instance.book.id} was successfuly updated")
         return super().form_valid(form)
 
-class CreateNewRentalView(CreateView):
+class CreateNewRentalView(LoginRequiredMixin,CreateView):
     model = Rental
     template_name = 'rentals/new.html'
     fields = ('customer',)
@@ -86,11 +88,12 @@ class CreateNewRentalView(CreateView):
         instance.book = obj
         instance.status = '#0'
         instance.rent_start_date = datetime.today().date()
+        instance.rent_by = self.request.user
         instance.save()
         return super().form_valid(form)
     
 
-class SelectDownlaoldRentalsView(FormView):
+class SelectDownlaoldRentalsView(LoginRequiredMixin,FormView):
     template_name = 'rentals/select_format.html'
     form_class = SelectExportOptionForm
 

@@ -13,6 +13,32 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # return super().handle(*args, **options)
+        customers_list = [
+        {'first_name': 'Alice', 'last_name': 'Dupont'},
+        {'first_name': 'Michel', 'last_name': 'Bertrand'},
+        {'first_name': 'Sophie', 'last_name': 'Lemoine'},
+        {'first_name': 'Thomas', 'last_name': 'Durand'},
+        {'first_name': 'Isabelle', 'last_name': 'Moreau'},
+        {'first_name': 'Nicolas', 'last_name': 'Girard'},
+        {'first_name': 'Claire', 'last_name': 'Robert'},
+        {'first_name': 'Jean', 'last_name': 'Marchand'},
+        {'first_name': 'Paul', 'last_name': 'Lambert'},
+        {'first_name': 'Elodie', 'last_name': 'Fournier'},
+        {'first_name': 'Lucas', 'last_name': 'Dufresne'},
+        {'first_name': 'Camille', 'last_name': 'Leroy'},
+        {'first_name': 'Julien', 'last_name': 'Rousseau'},
+        {'first_name': 'Manon', 'last_name': 'Blanchard'},
+        {'first_name': 'Arthur', 'last_name': 'Fontaine'},
+        {'first_name': 'Eva', 'last_name': 'Morin'},
+        {'first_name': 'Hugo', 'last_name': 'Chauvet'},
+        {'first_name': 'Emma', 'last_name': 'Perrin'},
+        {'first_name': 'Nathan', 'last_name': 'Gautier'},
+        {'first_name': 'Clara', 'last_name': 'Bernard'}
+        ]
+
+        for item in customers_list:
+            Customer.objects.create(**item)
+        print('#######################-->creation customers fin<--#######################')
 
         #authos
         # authors_list = ['John Smith','Adman Jones','John Tom','Jane Johnson']
@@ -32,6 +58,7 @@ class Command(BaseCommand):
                 Author.objects.create(name=name)
             except:
                 continue
+        print('#######################-->creation authors fin<--#######################')
         # publishers
         publishers_list = [
             {'name':'X books','country':Country(code='fr')},
@@ -64,7 +91,7 @@ class Command(BaseCommand):
 
         for item in publishers_list:
             Publisher.objects.create(**item)
-
+        print('#######################-->creation publisher fin<--#######################')
         # book title
         # book_title_list = ['Harry zooter','Lrd of kigth','Django rf','DRF']
         book_title_list = [
@@ -138,40 +165,26 @@ class Command(BaseCommand):
             try:
                 book = BookTitle.objects.create(title=title, publisher=publisher, author=author)
                 print(f"Livre ajouté : {book.title}")
+                book_titles = BookTitle.objects.all()
+                                # book_titles = BookTitle.objects.all()
+                for book_title in book_titles:
+                    quantity = random.randint(1, 5)
+                    for _ in range(quantity):
+                        Book.objects.create(title=book_title)
+                        print(f"Exemplaire ajouté pour : {book_title.title}")
+
             except Exception as e:
                 print(f"Erreur : {e}")
-
+        print('#######################-->creation book fin<--#######################')
+        
 
         # customers
-        customers_list = [
-            {'first_name':'John','last_name':'Doe'},
-              {'first_name':'Adman','last_name':'Jones'},
-                {'first_name':'Toto','last_name':'Dan'}
+        # customers_list = [
+        #     {'first_name':'John','last_name':'Doe'},
+        #       {'first_name':'Adman','last_name':'Jones'},
+        #         {'first_name':'Toto','last_name':'Dan'}
 
-        ]
-        customers_list = [
-        {'first_name': 'Alice', 'last_name': 'Dupont'},
-        {'first_name': 'Michel', 'last_name': 'Bertrand'},
-        {'first_name': 'Sophie', 'last_name': 'Lemoine'},
-        {'first_name': 'Thomas', 'last_name': 'Durand'},
-        {'first_name': 'Isabelle', 'last_name': 'Moreau'},
-        {'first_name': 'Nicolas', 'last_name': 'Girard'},
-        {'first_name': 'Claire', 'last_name': 'Robert'},
-        {'first_name': 'Jean', 'last_name': 'Marchand'},
-        {'first_name': 'Paul', 'last_name': 'Lambert'},
-        {'first_name': 'Elodie', 'last_name': 'Fournier'},
-        {'first_name': 'Lucas', 'last_name': 'Dufresne'},
-        {'first_name': 'Camille', 'last_name': 'Leroy'},
-        {'first_name': 'Julien', 'last_name': 'Rousseau'},
-        {'first_name': 'Manon', 'last_name': 'Blanchard'},
-        {'first_name': 'Arthur', 'last_name': 'Fontaine'},
-        {'first_name': 'Eva', 'last_name': 'Morin'},
-        {'first_name': 'Hugo', 'last_name': 'Chauvet'},
-        {'first_name': 'Emma', 'last_name': 'Perrin'},
-        {'first_name': 'Nathan', 'last_name': 'Gautier'},
-        {'first_name': 'Clara', 'last_name': 'Bernard'}
-        ]
+        # ]
+       
 
-        for item in customers_list:
-            Customer.objects.create(**item)
     

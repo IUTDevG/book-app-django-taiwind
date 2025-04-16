@@ -30,14 +30,17 @@
 		{% tailwind_css %}
 	</head>
 
-	<body class="bg-gray-50 dark:bg-slate-800 dark:text-white">
+	<body class="bg-green-50 dark:bg-slate-800 dark:text-white">
 		{%include 'layout/navbar.html'%}
 		<div class="grid grid-cols-12">
+			{% if request.user.is_authenticated %}
 			<div class="col-span-1 ">
 				{%include 'layout/sidebar.html'%}
 			</div>
+			  
+			{% endif %}
 
-			<div class="col-span-11 ">
+			<div class=" {% if request.user.is_authenticated %} col-span-11 {%else%} col-span-12 {%endif%}">
 				<div class="pt-20 px-6">
 					<a href="{% url 'change' %}"
 					class="fixed top-[150px] right-0  p-3 rounded-l-lg

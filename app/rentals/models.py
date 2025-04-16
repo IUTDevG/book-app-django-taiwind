@@ -1,9 +1,10 @@
 from django.db import models
 from books.models import Book
 from customers.models import Customer
+from users.models import CustomUser
 from datetime import timedelta
 from .choices import STATUS_CHOICES
-
+# from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -14,10 +15,12 @@ class Rental(models.Model):
     rent_start_date = models.DateField(help_text="when the book was rented")
     rent_end_date = models.DateField(help_text="deadline",blank=True)
     #return
-    rent_date = models.DateField(help_text="actuel retrun date",blank=True,null=True)
+    return_date = models.DateField(help_text="actuel retrun date",blank=True,null=True)
+    rent_by = models.ForeignKey(CustomUser,on_delete=models.PROTECT,editable=False)
     is_closed = models.BooleanField(default=False)
     created = models.DateField(auto_now_add=True)
     update = models.DateField(auto_now=True)
+    
 
     def __str__(self):
         return f"{self.book.isbn} rented by {self.customer.username}"

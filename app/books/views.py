@@ -5,9 +5,11 @@ from .forms import BookTitleForm
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 import string
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-class BookTitleView(FormView,ListView):
+class BookTitleView(LoginRequiredMixin,FormView,ListView):
     # model = BookTitle
     template_name = 'books/main.html'
     context_object_name = 'book_titles'
@@ -55,11 +57,11 @@ class BookTitleView(FormView,ListView):
 #         # return Book.objects.filter(slug=title_slug)
 #         return Book.objects.filter(title__slug=title_slug)
     
-class BookTitleDetailView(DetailView):
+class BookTitleDetailView(LoginRequiredMixin,DetailView):
     model = BookTitle
     template_name = 'books/detail.html' 
 
-class BookDetailView(DetailView):
+class BookDetailView(LoginRequiredMixin,DetailView):
     model = Book
     template_name = 'books/detail_book.html' 
     # def get_object(self):
@@ -67,7 +69,7 @@ class BookDetailView(DetailView):
     #     obj = get_object_or_404(Book,id=id)
     #     return obj
     
-class BookDeleteView(DeleteView):
+class BookDeleteView(LoginRequiredMixin,DeleteView):
     model = Book 
     template_name = 'books/confirm_delete.html'  
     
