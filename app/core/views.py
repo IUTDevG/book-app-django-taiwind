@@ -35,8 +35,9 @@ def login_view(request):
             if user is not None:
                 send_otp(request)
                 request.session['username'] = email
-                print('ok, sending otp')
-                return redirect('otp')
+                # print('ok, sending otp')
+                login(request, user)
+                return redirect('home')
             else:
                 messages.add_message(request, messages.ERROR, 'Invalid username or password')
 
@@ -47,38 +48,38 @@ def login_view(request):
     return render(request, 'login.html', context)
 
 
-def otp_view(request):
-    error_message = None
-    form = OTPForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            otp = form.cleaned_data['otp']
-            username = request.session['username']
-            otp_secret_key = request.session['otp_secret_key']
-            otp_valid_until = request.session['otp_valid_date']
+# def otp_view(request):
+#     error_message = None
+#     form = OTPForm(request.POST or None)
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             otp = form.cleaned_data['otp']
+#             username = request.session['username']
+#             otp_secret_key = request.session['otp_secret_key']
+#             otp_valid_until = request.session['otp_valid_date']
 
-            if otp_secret_key and otp_valid_until:
-                valid_until = datetime.fromisoformat(otp_valid_until)
-                if valid_until > datetime.now():
-                    totp = pyotp.TOTP(otp_secret_key, interval=120)
-                    if totp.verify(otp):
-                        user = get_object_or_404(User, email=username)
-                        login(request, user)
-                        del request.session['otp_secret_key']
-                        del request.session['otp_valid_date']
-                        return redirect('home')
-                    else:
-                        error_message = 'Invalid one-time-password'
-                else:
-                    error_message = "One-time-password has expired"
-            else:
-                error_message = "Ups... something went wrong :("
+#             if otp_secret_key and otp_valid_until:
+#                 valid_until = datetime.fromisoformat(otp_valid_until)
+#                 if valid_until > datetime.now():
+#                     totp = pyotp.TOTP(otp_secret_key, interval=120)
+#                     if totp.verify(otp):
+#                         user = get_object_or_404(User, email=username)
+#                         login(request, user)
+#                         del request.session['otp_secret_key']
+#                         del request.session['otp_valid_date']
+#                         return redirect('home')
+#                     else:
+#                         error_message = 'Invalid one-time-password'
+#                 else:
+#                     error_message = "One-time-password has expired"
+#             else:
+#                 error_message = "Ups... something went wrong :("
 
-        if error_message: messages.add_message(request, messages.ERROR, error_message)
+#         if error_message: messages.add_message(request, messages.ERROR, error_message)
     
-    context = {'form': form}
+#     context = {'form': form}
 
-    return render(request, 'otp.html', context)
+#     return render(request, 'otp.html', context)
 
 
 @login_required

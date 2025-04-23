@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import change_theme,DashboardView,chart_data,login_view,otp_view,logout_view,AboutView
+from .views import change_theme,DashboardView,chart_data,login_view,logout_view,AboutView
 
 
 urlpatterns = [
@@ -28,7 +28,7 @@ urlpatterns = [
     path('',DashboardView.as_view(),name='home'),
      path('login/',login_view,name='login'),
      path('logout/',logout_view,name='logout'),
-      path('otp/', otp_view, name='otp'),
+    #   path('otp/', otp_view, name='otp'),
           path('about/', AboutView.as_view(), name='about'),
       path('chart-data/',chart_data,name='data'),
     path('switch/',change_theme,name='change'),

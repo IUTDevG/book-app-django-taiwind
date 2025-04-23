@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
     'widget_tweaks',
+    # 'corsheaders',
 
     # apps
     'authors',
@@ -73,10 +74,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
       "django_browser_reload.middleware.BrowserReloadMiddleware",
+        'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

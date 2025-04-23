@@ -7,6 +7,9 @@ echo 'Supprimer les fichiers .pyc et .py effectue'
 # Supprimer la base de données
 rm -f db.sqlite3
 echo 'Supprimer la base de données effectue'
+
+# rm -r "./media/qr_codes/*png"
+find . -path "*/qr_codes/*" -name "*.png" -delete
 # Exécuter les migrations
 python manage.py makemigrations
 python manage.py migrate
